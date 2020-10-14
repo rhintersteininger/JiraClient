@@ -11,20 +11,22 @@ namespace ssl = net::ssl;       // from <boost/asio/ssl.hpp>
 using tcp = net::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
 
 
-void Jira::JiraSslConnection::open_connection()
+void Jira::JiraSslConnection::open_connection(bool keepAlive_)
 {
 	try
 	{
+		_keepAliveConnection = keepAlive_;
 		auto const host = Jira::JiraConnection::_host;
 		auto const port = _port;
 
-		net::io_context ioc;
-		ssl::context ctx(ssl::context::tlsv12_client);
-		ctx.set_verify_mode(ssl::verify_peer);
-		ctx.set_verify_callback(boost::bind(&Jira::JiraSslConnection::verify_certificate, this, _1, _2));
+		ioc = new net::io_context();
+		ctx = new ssl::context(ssl::context::tlsv12_client);
+		
+		ctx->set_verify_mode(ssl::verify_peer);
+		ctx->set_verify_callback(boost::bind(&Jira::JiraSslConnection::verify_certificate, this, _1, _2));
 
-		tcp::resolver resolver(ioc);
-		_stream = new beast::ssl_stream<beast::tcp_stream>(ioc, ctx);
+		tcp::resolver resolver(*ioc);
+		_stream = new beast::ssl_stream<beast::tcp_stream>(*ioc, *ctx);
 
 		if (_stream == nullptr)
 			throw new std::exception("Could not create ssl_stream");
@@ -60,6 +62,9 @@ void Jira::JiraSslConnection::close_connection()
 	if (ec)
 		throw beast::system_error{ ec };
 
+	delete _stream;
+	delete ioc;
+	delete ctx;
 }
 
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConnection::send_request(boost::beast::http::request<boost::beast::http::string_body> req_)
@@ -80,4 +85,22 @@ bool Jira::JiraSslConnection::verify_certificate(bool preverified,
 	boost::asio::ssl::verify_context& ctx)
 {
 	return true;
+}
+
+boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConnection::send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields)
+{
+	boost::beast::http::request<boost::beast::http::string_body> req{ verb_, target_.c_str(), JIRA_HTTP_VERSION };
+	req.set(boost::beast::http::field::host, _host);
+	req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+	req.set(boost::beast::http::field::authorization, "Basic " + _basicAuthToken);
+
+	if (_keepAliveConnection)
+		req.set(boost::beast::http::field::connection, "keep-alive");
+
+	for (auto field : additionalHeaderFields)
+	{
+		req.set(std::get<0>(field), std::get<1>(field));
+	}
+
+	return Jira::JiraSslConnection::send_request(req);
 }

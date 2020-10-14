@@ -48,7 +48,7 @@ Jira::JiraConnection* Jira::JiraConnectionPool::create_new_connection()
 
 	if (con == nullptr) throw new std::exception("could not create connection");
 
-	con->open_connection();
+	con->open_connection(true);
 
 	return con;
 }

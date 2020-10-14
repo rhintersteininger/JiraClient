@@ -9,12 +9,8 @@
 #include <iostream>
 #include <boost/beast/core/detail/base64.hpp>
 #include <cstdlib>
-#include <cstdlib>
 #include <iostream>
 #include <string>
-
-#define JIRA_HTTP_VERSION 11
-
 
 std::string Jira::JiraHttpClient::createBasicAuthToken(std::string username_, std::string password_)
 {
@@ -51,11 +47,7 @@ void Jira::JiraHttpClient::prepareConnection(std::string host_, short port_)
 
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpClient::get(std::string target_)
 {
-	boost::beast::http::request<boost::beast::http::string_body> req{ boost::beast::http::verb::get, target_.c_str(), JIRA_HTTP_VERSION };
-	req.set(boost::beast::http::field::host, _connectionPool->get_host());
-	req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
-
-	return _connectionPool->request_connection()->get_connection()->send_request(req);
+	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::get, target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>>());
 }
 
 
