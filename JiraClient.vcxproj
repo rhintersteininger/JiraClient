@@ -147,12 +147,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\JiraData.h" />
     <ClInclude Include="src\framework.h" />
     <ClInclude Include="include\JiraClient.h" />
     <ClInclude Include="src\JiraConnection\JiraConnection.h" />
     <ClInclude Include="src\JiraConnection\JiraConnectionPool.h" />
     <ClInclude Include="src\JiraConnection\JiraSslConnection.h" />
     <ClInclude Include="src\JiraConnection\JiraUnsecureConnection.h" />
+    <ClInclude Include="src\JiraData\Issue.h" />
+    <ClInclude Include="src\JiraData\SearchResult.h" />
     <ClInclude Include="src\pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +182,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\JiraData\Issue_ExampleJson.txt" />
+    <Text Include="src\JiraData\SearchResult_Schema.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

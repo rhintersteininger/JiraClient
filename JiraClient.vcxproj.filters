@@ -36,6 +36,15 @@
     <ClInclude Include="src\JiraConnection\JiraConnectionPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\JiraData\Issue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\JiraData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\JiraData\SearchResult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\JiraClient.cpp">
@@ -56,5 +65,9 @@
     <ClCompile Include="src\JiraConnection\JiraConnectionPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="src\JiraData\Issue_ExampleJson.txt" />
+    <Text Include="src\JiraData\SearchResult_Schema.txt" />
   </ItemGroup>
 </Project>

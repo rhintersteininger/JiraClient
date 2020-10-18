@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "../src/JiraConnection/JiraConnectionPool.h"
+#include "JiraData.h"
 
 namespace Jira
 {
@@ -13,9 +14,11 @@ namespace Jira
 			prepareConnection(host_, port_);
 		}
 
+		Jira::Data::SearchResults search(std::string jql_);
+
+
 		boost::beast::http::response<boost::beast::http::dynamic_body> get(std::string target_);
-
-
+		boost::beast::http::response<boost::beast::http::dynamic_body> post(std::string target_);
 
 		~JiraHttpClient()
 		{

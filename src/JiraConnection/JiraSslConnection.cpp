@@ -1,6 +1,7 @@
 #include "..\pch.h"
 
 #include "JiraSslConnection.h"
+#include <iomanip>
 
 #define HTTP_VERSION 11
 
@@ -85,6 +86,29 @@ bool Jira::JiraSslConnection::verify_certificate(bool preverified,
 	boost::asio::ssl::verify_context& ctx)
 {
 	return true;
+}
+
+std::string url_encode(const std::string& value) {
+	std::ostringstream escaped;
+	escaped.fill('0');
+	escaped << std::hex;
+
+	for (std::string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+		std::string::value_type c = (*i);
+
+		// Keep alphanumeric and other accepted characters intact
+		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+			escaped << c;
+			continue;
+		}
+	
+		// Any other characters are percent-encoded
+		escaped << std::uppercase;
+		escaped << '%' << std::setw(2) << int((unsigned char)c);
+		escaped << std::nouppercase;
+	}
+
+	return escaped.str();
 }
 
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConnection::send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields)
