@@ -128,3 +128,8 @@ boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConn
 
 	return Jira::JiraSslConnection::send_request(req);
 }
+
+Jira::JiraSslConnection::~JiraSslConnection()
+{
+
+}

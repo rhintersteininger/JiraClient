@@ -20,7 +20,7 @@ namespace Jira
 		}
 
 		std::unique_ptr<JiraConnectionWrapper> request_connection();
-		void release_connection(int id_);
+		void release_connection(Jira::JiraConnection* connection_);
 
 		std::string get_host() { return _host; }
 		short get_port() { return _port; }
@@ -33,7 +33,7 @@ namespace Jira
 
 
 		std::mutex _connection_mutex;
-		std::deque<JiraConnection> _availableConnections;
+		std::deque<JiraConnection*> _availableConnections;
 		short _currentConnections;
 
 		Jira::JiraConnection* get_or_create_connection();
@@ -52,7 +52,7 @@ namespace Jira
 		{
 			if (!_released)
 			{
-				_pool->release_connection(_id);
+				_pool->release_connection(_connection);
 			}
 		}
 

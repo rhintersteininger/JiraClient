@@ -25,12 +25,14 @@ namespace Jira
 	public:
 
 		JiraSslConnection(std::string basicAuthToken_, std::string host_, short port_) : JiraConnection(basicAuthToken_, host_, port_) {}
+		~JiraSslConnection();
+
 
 		void open_connection(bool keepAlive_);
 		void close_connection();
 		boost::beast::http::response<boost::beast::http::dynamic_body> send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields);
 	private:
-		bool _keepAliveConnection;
+		bool _keepAliveConnection = true;
 		net::io_context* ioc = nullptr;
 		ssl::context* ctx = nullptr;
 		beast::ssl_stream<beast::tcp_stream>*  _stream = nullptr;

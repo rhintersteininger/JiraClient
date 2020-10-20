@@ -8,9 +8,11 @@ std::unique_ptr<Jira::JiraConnectionWrapper> Jira::JiraConnectionPool::request_c
 	return wrapper;
 }
 
-void Jira::JiraConnectionPool::release_connection(int connectionId_)
+void Jira::JiraConnectionPool::release_connection(Jira::JiraConnection* connection_)
 {
-
+	if (connection_ == nullptr) return;
+	std::unique_lock <std::mutex> mtx(_connection_mutex);
+	_availableConnections.push_front(connection_);
 }
 
 
@@ -28,12 +30,12 @@ Jira::JiraConnection* Jira::JiraConnectionPool::get_or_create_connection()
 		else
 		{
 			//TODO: Wait for connection
-			throw new std::exception("currently no connection available");
+			throw std::exception("currently no connection available");
 		}
 	}
 	else
 	{
-		_availableConnections.pop_front();
+		return _availableConnections.front();
 	}
 
 }
@@ -46,7 +48,7 @@ Jira::JiraConnection* Jira::JiraConnectionPool::create_new_connection()
 	else
 		throw new std::exception("only secure connection supported");
 
-	if (con == nullptr) throw new std::exception("could not create connection");
+	if (con == nullptr) throw std::exception("could not create connection");
 
 	con->open_connection(true);
 
