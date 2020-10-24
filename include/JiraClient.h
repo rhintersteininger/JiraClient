@@ -14,7 +14,9 @@ namespace Jira
 			prepareConnection(host_, port_);
 		}
 
+
 		Jira::Data::SearchResults search(std::string jql_);
+		Jira::Data::GetIssue get_issue(std::string issueKeyOrId_);
 
 
 		boost::beast::http::response<boost::beast::http::dynamic_body> get(std::string target_);

@@ -73,4 +73,17 @@ Jira::Data::SearchResults Jira::JiraHttpClient::search(std::string jql_)
 	return data;
 }
 
+Jira::Data::GetIssue Jira::JiraHttpClient::get_issue(std::string issueKeyOrId_)
+{
+	boost::beast::http::response<boost::beast::http::dynamic_body> result = get("/rest/api/2/issue/" + issueKeyOrId_);
+	auto body = result.body();
+	std::string bodyStr;
 
+	for (auto seq : body.data()) {
+		auto* cbuf = boost::asio::buffer_cast<const char*>(seq);
+		bodyStr.append(cbuf, boost::asio::buffer_size(seq));
+	}
+
+	Jira::Data::GetIssue data = nlohmann::json::parse(bodyStr);
+	return data;
+}
