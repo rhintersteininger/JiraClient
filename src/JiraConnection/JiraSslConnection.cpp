@@ -111,19 +111,25 @@ std::string url_encode(const std::string& value) {
 	return escaped.str();
 }
 
-boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConnection::send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields)
+boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConnection::send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields, std::string body_)
 {
 	boost::beast::http::request<boost::beast::http::string_body> req{ verb_, target_.c_str(), JIRA_HTTP_VERSION };
 	req.set(boost::beast::http::field::host, _host);
 	req.set(boost::beast::http::field::user_agent, BOOST_BEAST_VERSION_STRING);
 	req.set(boost::beast::http::field::authorization, "Basic " + _basicAuthToken);
-
+	
 	if (_keepAliveConnection)
 		req.set(boost::beast::http::field::connection, "keep-alive");
 
 	for (auto field : additionalHeaderFields)
 	{
 		req.set(std::get<0>(field), std::get<1>(field));
+	}
+
+	if (!body_.empty())
+	{
+		req.body() = body_;
+		req.prepare_payload();
 	}
 
 	return Jira::JiraSslConnection::send_request(req);

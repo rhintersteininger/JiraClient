@@ -17,10 +17,12 @@ namespace Jira
 
 		Jira::Data::SearchResults search(std::string jql_);
 		Jira::Data::GetIssue get_issue(std::string issueKeyOrId_);
+		bool add_worklog_to_issue(Jira::Data::AddWorklog worklogEntry);
+
 
 
 		boost::beast::http::response<boost::beast::http::dynamic_body> get(std::string target_);
-		boost::beast::http::response<boost::beast::http::dynamic_body> post(std::string target_);
+		boost::beast::http::response<boost::beast::http::dynamic_body> post(std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields_, std::string body_);
 
 		~JiraHttpClient()
 		{

@@ -48,19 +48,17 @@ void Jira::JiraHttpClient::prepareConnection(std::string host_, short port_)
 
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpClient::get(std::string target_)
 {
-	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::get, target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>>());
+	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::get, target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>>(), "");
 }
 
-boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpClient::post(std::string target_)
+boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpClient::post(std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalFields_, std::string body_)
 {
-	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::post, target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>>());
+	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::post, target_, additionalFields_, body_);
 }
 
 Jira::Data::SearchResults Jira::JiraHttpClient::search(std::string jql_)
 {
 	boost::beast::http::response<boost::beast::http::dynamic_body> result = get("/rest/api/2/search?jql=" + jql_);
-
-	std::cout << result << std::endl;
 
 	auto body = result.body();
 	std::string bodyStr;//bodyStr(boost::beast::buffers_to_string(body.data()), body.size());
@@ -87,3 +85,21 @@ Jira::Data::GetIssue Jira::JiraHttpClient::get_issue(std::string issueKeyOrId_)
 	Jira::Data::GetIssue data = nlohmann::json::parse(bodyStr);
 	return data;
 }
+
+bool Jira::JiraHttpClient::add_worklog_to_issue(Jira::Data::AddWorklog worklogEntry)
+{
+	std::vector< std::tuple < boost::beast::http::field, boost::string_view>> fields;
+	fields.push_back(std::make_tuple(boost::beast::http::field::content_type, "application/json; charset=UTF-8"));
+
+	nlohmann::json worklogEntryJson;
+	nlohmann::to_json(worklogEntryJson, worklogEntry);
+	std::string worklogJsonString = nlohmann::to_string(worklogEntryJson);
+	std::cout << worklogJsonString << std::endl;
+
+	std::string target("/rest/api/2/issue/" + *worklogEntry.get_issue_id() + "/worklog");
+	boost::beast::http::response<boost::beast::http::dynamic_body> result = post(target, fields, worklogJsonString);
+	int statusCode = result.result_int();
+	return (int)(statusCode / 100) == 2;
+}
+
+
