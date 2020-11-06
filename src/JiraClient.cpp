@@ -102,4 +102,20 @@ bool Jira::JiraHttpClient::add_worklog_to_issue(Jira::Data::AddWorklog worklogEn
 	return (int)(statusCode / 100) == 2;
 }
 
+Jira::Data::GetUser Jira::JiraHttpClient::get_current_user()
+{
+	boost::beast::http::response<boost::beast::http::dynamic_body> result = get("/rest/api/2/myself");
+
+	auto body = result.body();
+	std::string bodyStr;
+
+	for (auto seq : body.data()) {
+		auto* cbuf = boost::asio::buffer_cast<const char*>(seq);
+		bodyStr.append(cbuf, boost::asio::buffer_size(seq));
+	}
+
+	Jira::Data::GetUser data = nlohmann::json::parse(bodyStr);
+	return data;
+}
+
 
