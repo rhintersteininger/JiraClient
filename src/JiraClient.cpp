@@ -48,12 +48,12 @@ void Jira::JiraHttpClient::prepareConnection(std::string host_, short port_)
 
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpClient::get(std::string target_)
 {
-	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::get, target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>>(), "");
+	return _connectionPool->send_request(boost::beast::http::verb::get, target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>>(), "");
 }
 
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpClient::post(std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalFields_, std::string body_)
 {
-	return _connectionPool->request_connection()->get_connection()->send_request(boost::beast::http::verb::post, target_, additionalFields_, body_);
+	return _connectionPool->send_request(boost::beast::http::verb::post, target_, additionalFields_, body_);
 }
 
 Jira::Data::SearchResults Jira::JiraHttpClient::search(std::string jql_)

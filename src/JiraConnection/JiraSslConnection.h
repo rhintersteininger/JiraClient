@@ -30,6 +30,7 @@ namespace Jira
 
 		void open_connection(bool keepAlive_);
 		void close_connection();
+
 		boost::beast::http::response<boost::beast::http::dynamic_body> send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields, std::string body_);
 	private:
 		bool _keepAliveConnection = true;

@@ -88,8 +88,6 @@ bool Jira::JiraSslConnection::verify_certificate(bool preverified,
 	return true;
 }
 
-
-
 boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConnection::send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields, std::string body_)
 {
 	boost::beast::http::request<boost::beast::http::string_body> req{ verb_, target_.c_str(), JIRA_HTTP_VERSION };
@@ -116,5 +114,5 @@ boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraSslConn
 
 Jira::JiraSslConnection::~JiraSslConnection()
 {
-
+	close_connection();
 }

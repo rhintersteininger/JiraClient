@@ -19,8 +19,10 @@ namespace Jira
 			
 		}
 
-		std::unique_ptr<JiraConnectionWrapper> request_connection();
+		boost::beast::http::response<boost::beast::http::dynamic_body> send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields, std::string body_);
 		void release_connection(Jira::JiraConnection* connection_);
+		void destroy_connection(Jira::JiraConnection* connection_);
+		std::unique_ptr<JiraConnectionWrapper> recreate_connection(Jira::JiraConnection* connection_);
 
 		std::string get_host() { return _host; }
 		short get_port() { return _port; }
@@ -32,12 +34,14 @@ namespace Jira
 		short _maxConnections;
 
 
-		std::mutex _connection_mutex;
+		std::recursive_mutex _connection_mutex;
 		std::deque<JiraConnection*> _availableConnections;
 		short _currentConnections;
 
 		Jira::JiraConnection* get_or_create_connection();
 		Jira::JiraConnection* create_new_connection();
+
+		std::unique_ptr<JiraConnectionWrapper> request_connection();
 	};
 
 
@@ -50,12 +54,13 @@ namespace Jira
 
 		~JiraConnectionWrapper()
 		{
-			if (!_released)
+			if (!_released && !_destroyed)
 			{
 				_pool->release_connection(_connection);
 			}
 		}
 
+		bool _destroyed = false;
 	private:
 		Jira::JiraConnection* const _connection;
 		bool _released = false;
