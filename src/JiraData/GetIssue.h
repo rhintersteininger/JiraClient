@@ -43,8 +43,11 @@ namespace Jira {
             virtual ~GetIssueFields() = default;
 
         private:
+            std::shared_ptr<std::string> summary;
 
         public:
+            std::shared_ptr<std::string> get_summary() const { return summary; }
+            void set_summary(std::shared_ptr<std::string> value) { this->summary = value; }
         };
 
         class Names {
@@ -216,10 +219,12 @@ namespace nlohmann {
 
    
     inline void from_json(const json& j, Jira::Data::GetIssueFields& x) {
+        x.set_summary(Jira::Data::get_optional<std::string>(j, "summary"));
     }
 
     inline void to_json(json& j, const Jira::Data::GetIssueFields& x) {
         j = json::object();
+        j["summary"] = x.get_summary();
     }
 
     inline void from_json(const json& j, Jira::Data::Names& x) {
