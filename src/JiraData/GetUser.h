@@ -96,6 +96,7 @@ namespace Jira {
             std::shared_ptr<std::string> name;
             std::shared_ptr<std::string> self;
             std::shared_ptr<std::string> time_zone;
+            std::shared_ptr<std::string> account_id;
 
         public:
             const bool& get_active() const { return active; }
@@ -134,6 +135,9 @@ namespace Jira {
 
             std::shared_ptr<std::string> get_time_zone() const { return time_zone; }
             void set_time_zone(std::shared_ptr<std::string> value) { this->time_zone = value; }
+
+            std::shared_ptr<std::string> get_account_id() const { return account_id; }
+            void set_account_id(std::shared_ptr<std::string> value) { this->account_id = value; }
         };
     }
 }
@@ -188,6 +192,7 @@ namespace nlohmann {
         x.set_name(Jira::Data::get_optional<std::string>(j, "name"));
         x.set_self(Jira::Data::get_optional<std::string>(j, "self"));
         x.set_time_zone(Jira::Data::get_optional<std::string>(j, "timeZone"));
+        x.set_account_id(Jira::Data::get_optional<std::string>(j, "accountId"));
     }
 
     inline void to_json(json& j, const Jira::Data::GetUser& x) {
@@ -204,6 +209,7 @@ namespace nlohmann {
         j["name"] = x.get_name();
         j["self"] = x.get_self();
         j["timeZone"] = x.get_time_zone();
+        j["accountId"] = x.get_account_id();
     }
 }
 
