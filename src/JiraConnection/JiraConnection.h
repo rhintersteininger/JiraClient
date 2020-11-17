@@ -26,6 +26,8 @@ namespace Jira
 		virtual void open_connection(bool keepAlive_) = 0;
 		virtual void close_connection() = 0;
 
+		static std::string url_encode(const std::string& value);
+
 		virtual boost::beast::http::response<boost::beast::http::dynamic_body> send_request(boost::beast::http::verb verb_, std::string target_, std::vector<std::tuple<boost::beast::http::field, boost::string_view>> additionalHeaderFields, std::string body_) = 0;
 
 	protected:

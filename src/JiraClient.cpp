@@ -58,7 +58,7 @@ boost::beast::http::response<boost::beast::http::dynamic_body> Jira::JiraHttpCli
 
 Jira::Data::SearchResults Jira::JiraHttpClient::search(std::string jql_)
 {
-	boost::beast::http::response<boost::beast::http::dynamic_body> result = get("/rest/api/2/search?jql=" + jql_);
+	boost::beast::http::response<boost::beast::http::dynamic_body> result = get("/rest/api/2/search?jql=" + Jira::JiraConnection::url_encode(jql_));
 
 	auto body = result.body();
 	std::string bodyStr;//bodyStr(boost::beast::buffers_to_string(body.data()), body.size());
