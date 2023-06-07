@@ -19,7 +19,7 @@
 
 #ifndef NLOHMANN_OPT_HELPER
 #define NLOHMANN_OPT_HELPER
-namespace nlohmann {
+namespace my_nlohmann {
     template <typename T>
     struct adl_serializer<std::shared_ptr<T>> {
         static void to_json(json& j, const std::shared_ptr<T>& opt) {
@@ -112,6 +112,7 @@ namespace Jira {
 }
 
 namespace nlohmann {
+
     void from_json(const json& j, Jira::Data::AvatarUrls& x);
     void to_json(json& j, const Jira::Data::AvatarUrls& x);
 
@@ -153,7 +154,7 @@ namespace nlohmann {
         x.set_visibility(Jira::Data::get_optional<Jira::Data::Visibility>(j, "visibility"));
     }
 
-    inline void to_json(json& j, const Jira::Data::AddWorklog& x) {
+    inline void to_my_json(json& j, const Jira::Data::AddWorklog& x) {
         j = json::object();
         if (x.get_author() != nullptr)
             j["author"] = x.get_author();      

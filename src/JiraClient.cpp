@@ -92,7 +92,7 @@ bool Jira::JiraHttpClient::add_worklog_to_issue(Jira::Data::AddWorklog worklogEn
 	fields.push_back(std::make_tuple(boost::beast::http::field::content_type, "application/json; charset=UTF-8"));
 
 	nlohmann::json worklogEntryJson;
-	nlohmann::to_json(worklogEntryJson, worklogEntry);
+	nlohmann::to_my_json(worklogEntryJson, worklogEntry);
 	std::string worklogJsonString = nlohmann::to_string(worklogEntryJson);
 	std::cout << worklogJsonString << std::endl;
 
